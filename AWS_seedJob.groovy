@@ -2,7 +2,7 @@ folder('DSLteam1')
 folder('DSLteam1/DEV')
 job('DSLteam1/DEV/job1'){
   description 'This is the first step of Team1-DEV'
-  customWorkspace('${JENKINS_HOME}\\workspace\\test_promotion\\deploy_jar_pipeline\\ArtifactDirectory\\com\\technet\\webapp-team1\\${artifact_version}')
+  customWorkspace('${JENKINS_HOME}//workspace//DSLteam1//DEV//pipeline1//ArtifactDirectory//com//technet//webapp-team1//${artifact_version}')
   parameters {
     stringParam('artifact_version','0.1.0-SNAPSHOT','description written in DSL script')
     stringParam('db_username','root','description written in DSL script')
