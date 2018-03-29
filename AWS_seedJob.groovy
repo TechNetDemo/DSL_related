@@ -16,9 +16,9 @@ job('DSLteam1/DEV/job1'){
     }
   }  
   steps{
-    batchFile('ren *.war webApp.war\njar -xvf webApp.war')
+    batchFile('jar -xvf *.war')
     systemGroovyCommand(readFileFromWorkspace('replaceToken.groovy'))
-    batchFile('del webApp.war\njar -cvf webApp.war *')
+    batchFile('move *.war ..\\\njar -cvf webApp.war *')
   }
   configure{ project ->
     project / publishers << 'jenkinsci.plugins.influxdb.InfluxDbPublisher' {
