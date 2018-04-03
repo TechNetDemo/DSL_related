@@ -13,7 +13,9 @@ println(fileContents);
 //replace token foreach
  parameters.each {
   	 println "parameter ${it.name}:" + it.getValue();
-         fileContents = fileContents.replaceAll("@@@${it.name}@@@" , it.getValue())
+  	if (it.getValue() != null) {
+        fileContents = fileContents.replaceAll("@@@${it.name}@@@" , it.getValue())
+  	}
 }
 
 println("[after ]")
