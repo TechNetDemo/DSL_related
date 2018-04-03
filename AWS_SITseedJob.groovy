@@ -1,8 +1,7 @@
-folder('DSLteam1')
-folder('DSLteam1/DEV')
-job('DSLteam1/DEV/job1'){
-  description 'This is the first step of Team1-DEV'
-  customWorkspace('C:\\Jenkins_agent\\workspace\\DSLteam1\\DEV\\pipeline1\\ArtifactDirectory\\com\\technet\\webapp-team1\\${artifact_version}')
+folder('DSLteam1/SIT')
+job('DSLteam1/SIT/job1'){
+  description 'This is the first step of Team1-SIT'
+  customWorkspace('C:\\Jenkins_agent\\workspace\\DSLteam1\\SIT\\pipeline1\\ArtifactDirectory\\com\\technet\\webapp-team1\\${artifact_version}')
   parameters {
     stringParam('artifact_version','0.1.0-SNAPSHOT','description written in DSL script')
     stringParam('db_username','root','description written in DSL script')
@@ -11,7 +10,7 @@ job('DSLteam1/DEV/job1'){
     stringParam('db_tableName','film','description written in DSL script')
     labelParam('node_to_run'){
       description('nodelabel specified in DSL')
-      defaultValue('dev_label')
+      defaultValue('sit_label')
       allNodes('allCases','AllNodeEligibility')
     }
   }  
@@ -37,16 +36,16 @@ job('DSLteam1/DEV/job1'){
     }
    }
 }
-pipelineJob('DSLteam1/DEV/pipeline1'){
+pipelineJob('DSLteam1/SIT/pipeline1'){
   parameters {
     stringParam('artifact_version','0.1.0-SNAPSHOT','description written in DSL script')
     stringParam('db_username','root','description written in DSL script')
     stringParam('db_password','0000abc!','description written in DSL script')
-    stringParam('db_url','dbc:mysql://mydbinstance.c3aqksy4y3yi.us-east-1.rds.amazonaws.com:3306/WebAppDB','description written in DSL script')
+    stringParam('db_url','dbc:mysql://mydbinstance.c3aqksy4y3yi.us-east-1.rds.amazonaws.com:3306/<specify SIT DB here>','description written in DSL script')
     stringParam('db_tableName','film','description written in DSL script')
     labelParam('node_to_run'){
       description('nodelabel specified in DSL')
-      defaultValue('dev_label')
+      defaultValue('sit_label')
       allNodes('allCases','AllNodeEligibility')
     }
   }
