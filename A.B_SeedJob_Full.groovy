@@ -1,7 +1,11 @@
 folder('A.B')
 
 folder('A.B/JOB')
+folder('A.B/BUILD')
 folder('A.B/DEV')
+folder('A.B/SIT')
+folder('A.B/SAT')
+folder('A.B/PROD')
 //WebApp.DownloadArtifact
 pipelineJob('A.B/JOB/WebApp.DownloadArtifact'){
   description 'WebApp Step 1'
@@ -75,6 +79,55 @@ job('A.B/JOB/WebApp.Deploy'){
     }
   }
 }
+
+//A.B_Build_WebApp.Build
+job('A.B/BUILD/A.B_BUILD_WebApp.Build'){
+  scm{
+      git{
+          remote{
+        github('TechNetDemo/WebAppDemo')
+        credentials('4421f092-feb9-4616-96ba-2da48785e825')
+          }
+      }
+  }
+    
+  configure { project ->
+    project / 'builders' / 'org.jfrog.hudson.maven3.Maven3Builder' {
+        mavenName('Maven')
+        rootPom('webapp-team1/pom.xml')
+        goals('clean install')
+        
+    }
+  }  
+    
+  configure { project ->
+    project / 'buildWrappers' / 'org.jfrog.hudson.maven3.ArtifactoryMaven3Configurator' {
+      deployArtifacts(true)
+      deployBuildInfo(true)
+      details{
+            artifactoryName('AWS-Artifactory')
+            artifactoryUrl('http://ip-172-31-92-116.ec2.internal:8081/artifactory')
+            deployReleaseRepository{
+                keyFromSelect('libs-release-local')
+            }
+            deploySnapshotRepository{
+                keyFromSelect('libs-snapshot-local')
+          }
+        }
+        resolverDetails{
+            artifactoryName('AWS-Artifactory')
+            artifactoryUrl('http://ip-172-31-92-116.ec2.internal:8081/artifactory')
+            resolveReleaseRepository{
+                keyFromSelect('libs-release-local')
+            }
+            resolveSnapshotRepository{
+                keyFromSelect('libs-snapshot-local')
+          }
+        }
+    }
+  }    
+}
+
 //A.B_DEV_Pipeline
 pipelineJob('A.B/DEV/A.B_DEV_Pipeline'){
   parameters {
@@ -108,7 +161,121 @@ pipelineJob('A.B/DEV/A.B_DEV_WebApp.Pipeline'){
       scm{
         git('https://github.com/TechNetDemo/DSL_related.git')
       }
-      scriptPath('Pipeline/A.B_DEV_WebApp.Pipeline.groovy')
+      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
+    }
+  }  
+}
+
+//A.B_SIT_Pipeline
+pipelineJob('A.B/SIT/A.B_SIT_Pipeline'){
+  parameters {
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_SIT_Pipeline.groovy')
+    }
+  }  
+}
+//A.B_SIT_WebApp.Pipeline
+pipelineJob('A.B/SIT/A.B_SIT_WebApp.Pipeline'){
+  parameters {
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    labelParam('node_to_run'){
+      description('Specify the agents to deploy')
+      defaultValue('sit_label')
+      allNodes('allCases','AllNodeEligibility')
+    }
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
+    }
+  }  
+}
+
+//A.B_SAT_Pipeline
+pipelineJob('A.B/SAT/A.B_SAT_Pipeline'){
+  parameters {
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_SAT_Pipeline.groovy')
+    }
+  }  
+}
+//A.B_SAT_WebApp.Pipeline
+pipelineJob('A.B/SAT/A.B_SAT_WebApp.Pipeline'){
+  parameters {
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    labelParam('node_to_run'){
+      description('Specify the agents to deploy')
+      defaultValue('sat_label')
+      allNodes('allCases','AllNodeEligibility')
+    }
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
+    }
+  }  
+}
+
+//A.B_PROD_Pipeline
+pipelineJob('A.B/PROD/A.B_PROD_Pipeline'){
+  parameters {
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_PROD_Pipeline.groovy')
+    }
+  }  
+}
+//A.B_PROD_WebApp.Pipeline
+pipelineJob('A.B/PROD/A.B_PROD_WebApp.Pipeline'){
+  parameters {
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    labelParam('node_to_run'){
+      description('Specify the agents to deploy')
+      defaultValue('prod_label')
+      allNodes('allCases','AllNodeEligibility')
+    }
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
     }
   }  
 }
