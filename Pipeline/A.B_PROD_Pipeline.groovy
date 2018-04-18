@@ -6,7 +6,7 @@ pipeline {
                 script{
                     try{
                         
-                        build job: '/A.B/DEV/A.B_DEV_WebApp.Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                        build job: '/A.B/PROD/A.B_PROD_WebApp.Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
                                                 if(currentBuild.result == null) {
                             currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
                         }
@@ -25,7 +25,7 @@ pipeline {
             steps{
                 script{
                     try{
-                        echo 'Run another component pipeline <A.B_DEV_component2.Pipeline>'
+                        echo 'Run another component pipeline <A.B_PROD_component2.Pipeline>'
                         if(currentBuild.result == null) {
                             currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
                         }

@@ -23,8 +23,8 @@ job('A.B/JOB/WebApp.ReplaceToken'){
     project / 'buildWrappers' / 'hudson.plugins.ws__cleanup.PreBuildCleanup' {
         patterns{
             'hudson.plugins.ws__cleanup.Pattern'{
-            	pattern('**/*-1.war')
-            	type('EXCLUDE')
+              pattern('**/*-1.war')
+              type('EXCLUDE')
            }
         }
         deleteDirs(true)
@@ -75,6 +75,22 @@ job('A.B/JOB/WebApp.Deploy'){
     }
   }
 }
+//A.B_DEV_Pipeline
+pipelineJob('A.B/DEV/A.B_DEV_Pipeline'){
+  parameters {
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_DEV_Pipeline.groovy')
+    }
+  }  
+}
 //A.B_DEV_WebApp.Pipeline
 pipelineJob('A.B/DEV/A.B_DEV_WebApp.Pipeline'){
   parameters {
@@ -88,8 +104,11 @@ pipelineJob('A.B/DEV/A.B_DEV_WebApp.Pipeline'){
     }
   }
   definition {
-    cps{
-      script(readFileFromWorkspace('Pipeline/A.B_DEV_WebApp.Pipeline.groovy'))
-       }
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_DEV_WebApp.Pipeline.groovy')
+    }
   }  
 }

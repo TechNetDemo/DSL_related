@@ -1,13 +1,12 @@
 pipeline {
     agent {label "master"}
     stages{
-        stage('WebApp'){
+        stage('Download'){
             steps{
                 script{
                     try{
-                        
-                        build job: '/A.B/DEV/A.B_DEV_WebApp.Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
-                                                if(currentBuild.result == null) {
+                        build job: '/A.B/JOB/WebApp.DownloadArtifact', parameters: [string(name: 'artifact_version', value: artifact_version)]
+                    if(currentBuild.result == null) {
                             currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
                         }
   
@@ -21,14 +20,15 @@ pipeline {
                 }
             }
         }
-        stage('Component2'){
+        stage('Replace'){
             steps{
                 script{
                     try{
-                        echo 'Run another component pipeline <A.B_DEV_component2.Pipeline>'
-                        if(currentBuild.result == null) {
+                        build job: '/A.B/JOB/WebApp.ReplaceToken', parameters: [string(name: 'db_username', value: db_username), string(name: 'db_password', value: db_password), string(name: 'artifact_version', value: artifact_version)]
+                    if(currentBuild.result == null) {
                             currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
                         }
+  
                     }
                     catch (err) {
                         if(currentBuild.result == null) {
@@ -38,14 +38,34 @@ pipeline {
                     }
                 }
             }
-    }
+        }
+        stage('Deploy'){
+            steps{
+                script{
+                    try{
+                         build job: '/A.B/JOB/WebApp.Deploy', parameters: [string(name: 'artifact_version', value: artifact_version), [$class: 'LabelParameterValue', name: 'node_to_run', label: node_to_run, allNodesMatchingLabel: true, nodeEligibility: [$class: 'AllNodeEligibility']]]
+                    if(currentBuild.result == null) {
+                            currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
+                        }
+  
+                    }
+                    catch (err) {
+                        if(currentBuild.result == null) {
+                            currentBuild.result = "FAILURE" // sets the ordinal as 4 and boolean to false
+                        }
+                        throw err
+                    }
+                }
+            }
+        }
+
     }
     post {
             success{
                 step([$class: 'InfluxDbPublisher',
                     customData: null,
                     customDataMap: null,
-                    target: 'stgDB'])
+                    target: 'pipelineTestDB'])
             }
             aborted {
                 echo '<aborted message>'
@@ -54,7 +74,7 @@ pipeline {
                     step([$class: 'InfluxDbPublisher',
                         customData: null,
                         customDataMap: null,
-                        target: 'stgDB'])
+                        target: 'pipelineTestDB'])
                 }
             }
             failure {
@@ -63,8 +83,9 @@ pipeline {
                     step([$class: 'InfluxDbPublisher',
                         customData: null,
                         customDataMap: null,
-                        target: 'stgDB'])
+                        target: 'pipelineTestDB'])
                 }
             }
     }
+
 }
