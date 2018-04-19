@@ -24,7 +24,7 @@ pipeline {
             steps{
                 script{
                     try{
-                        build job: '/A.B/JOB/WebApp.ReplaceToken', parameters: [string(name: 'db_username', value: db_username), string(name: 'db_password', value: db_password), string(name: 'artifact_version', value: artifact_version)]
+                        build job: '/A.B/JOB/WebApp.ReplaceToken', parameters: [string(name: 'db_username', value: db_username), password(name: 'db_password', value: db_password), string(name: 'artifact_version', value: artifact_version)]
                     if(currentBuild.result == null) {
                             currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
                         }
