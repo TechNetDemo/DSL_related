@@ -3,7 +3,7 @@ pipeline {
     stages{
     	stage('Approval'){
             steps{
-				input message: 'Start DEV Deployment',ok:'approve' , submitter: 'admin'
+				input message: 'Start DEV Deployment?', submitter: 'admin'
             }
         }
         stage('WebApp'){
