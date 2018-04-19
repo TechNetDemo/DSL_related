@@ -6,7 +6,7 @@ pipeline {
                 script{
                     try{
                         
-                        build job: '/A.B/SIT/A.B_SIT_WebApp.Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),password(name: 'db_password', value: db_password)]
+                        build job: '/A.B/SIT/A.B_SIT_WebApp.Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
                                                 if(currentBuild.result == null) {
                             currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
                         }

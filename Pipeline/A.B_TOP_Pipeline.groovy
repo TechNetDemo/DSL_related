@@ -10,12 +10,12 @@ pipeline {
                 submitter 'dev_admin,admin'
                 parameters{
                     string(name: 'db_username', defaultValue: 'root', description: 'account for WebApp connect to MySQL')
-                    password(name: 'db_password', defaultValue: '')
+                    string(name: 'db_password', defaultValue: '')
                 }  
             }
             steps {
                 input message: 'Start DEV Deployment? (by approver)', submitter: 'admin,dev_admin'
-                build job: '/A.B/DEV/A.B_DEV_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),password(name: 'db_password', value: db_password)]
+                build job: '/A.B/DEV/A.B_DEV_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
         stage('SIT') { 
@@ -24,12 +24,12 @@ pipeline {
                 submitter 'sit_admin,admin'
                 parameters{
                     string(name: 'db_username', defaultValue: 'root', description: 'account for WebApp connect to MySQL')
-                    password(name: 'db_password', defaultValue: '',description: 'password of the account')
+                    string(name: 'db_password', defaultValue: '',description: 'password of the account')
                 }  
             }
             steps {
                 input message: 'Start SIT Deployment?(by approver)'
-                build job:'/A.B/SIT/A.B_SIT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),password(name: 'db_password', value: db_password)]
+                build job:'/A.B/SIT/A.B_SIT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
         stage('SAT') { 
@@ -38,12 +38,12 @@ pipeline {
                 submitter 'sat_admin,admin'
                 parameters{
                     string(name: 'db_username', defaultValue: 'root', description: 'account for WebApp connect to MySQL')
-                    password(name: 'db_password', defaultValue: '',description: 'password of the account')
+                    string(name: 'db_password', defaultValue: '',description: 'password of the account')
                 }  
             }
             steps {
                 input message: 'Start SAT Deployment? (by approver)'    
-                build job:'/A.B/SAT/A.B_SAT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),password(name: 'db_password', value: db_password)]
+                build job:'/A.B/SAT/A.B_SAT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
         stage('PROD') { 
@@ -52,12 +52,12 @@ pipeline {
                 submitter 'prod_admin,admin'
                 parameters{
                     string(name: 'db_username', defaultValue: 'root', description: 'account for WebApp connect to MySQL')
-                    password(name: 'db_password', defaultValue: '',description: 'password of the account')
+                    string(name: 'db_password', defaultValue: '',description: 'password of the account')
                 }  
             }
             steps {
                 input message: 'Start PROD Deployment? (by approver)'   
-                build job:'/A.B/PROD/A.B_PROD_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),password(name: 'db_password', value: db_password)]
+                build job:'/A.B/PROD/A.B_PROD_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
     }
