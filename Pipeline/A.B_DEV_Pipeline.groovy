@@ -1,6 +1,11 @@
 pipeline {
     agent {label "master"}
     stages{
+    	stage('Approval'){
+            steps{
+				input message: 'Start DEV Deployment',ok:'approve' , submitter: 'admin'
+            }
+        }
         stage('WebApp'){
             steps{
                 script{
