@@ -279,3 +279,18 @@ pipelineJob('A.B/PROD/A.B_PROD_WebApp.Pipeline'){
     }
   }  
 }
+
+//A.B_TOP_Pipeline
+pipelineJob('A.B/A.B_TOP_Pipeline'){
+   parameters {
+    stringParam('artifact_version','0.1.0-SNAPSHOT','Artifact version used for deployment')
+   }
+   definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_TOP_Pipeline.groovy')
+    }
+  }  
+}

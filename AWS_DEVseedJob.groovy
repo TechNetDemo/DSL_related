@@ -14,6 +14,7 @@ job('DSLteam1/DEV/job1'){
       defaultValue('dev_label')
       allNodes('allCases','AllNodeEligibility')
     }
+    stringParam('upstream','manual_start','for influxdb')
   }  
   steps{
     batchFile('jar -xvf *.war')
