@@ -4,66 +4,53 @@ pipeline {
         stage('WebApp'){
             steps{
                 script{
-                    try{
+                        mydata =[:]
+                        mydata['upstream'] = upstream
                         
-                        build job: '/A.B/SIT/A.B_SIT_WebApp.Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
-                                                if(currentBuild.result == null) {
-                            currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
-                        }
-  
-                    }
-                    catch (err) {
-                        if(currentBuild.result == null) {
-                            currentBuild.result = "FAILURE" // sets the ordinal as 4 and boolean to false
-                        }
-                        throw err
-                    }
+                        Job_WebApp= build job: '/A.B/SIT/A.B_SIT_WebApp.Pipeline', parameters: [string(name: 'upstream', value: JOB_NAME),string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                        
+                        mydata['job1_BuildNum'] = Job_WebApp.getNumber()
+                        mydata['job1_Result'] = Job_WebApp.getResult()
+
                 }
             }
         }
         stage('Component2'){
             steps{
                 script{
-                    try{
                         echo 'Run another component pipeline <A.B_SIT_component2.Pipeline>'
-                        if(currentBuild.result == null) {
-                            currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
-                        }
-                    }
-                    catch (err) {
-                        if(currentBuild.result == null) {
-                            currentBuild.result = "FAILURE" // sets the ordinal as 4 and boolean to false
-                        }
-                        throw err
-                    }
                 }
             }
-    }
+        }
     }
     post {
             success{
-                step([$class: 'InfluxDbPublisher',
-                    customData: null,
-                    customDataMap: null,
-                    target: 'stgDB'])
+                script{
+                    currentBuild.result = "SUCCESS"
+                    step([$class: 'InfluxDbPublisher',
+                        customData: mydata,
+                        customDataMap: null,
+                        target: 'DSL_DB'])
+                }
             }
             aborted {
                 echo '<aborted message>'
                 script{
                     currentBuild.result = "ABORTED"
                     step([$class: 'InfluxDbPublisher',
-                        customData: null,
+                        customData: mydata,
                         customDataMap: null,
-                        target: 'stgDB'])
+                        target: 'DSL_DB'])
                 }
             }
             failure {
                 echo '<rollback process>'
                 script{
+                    currentBuild.result = "FAILURE"
                     step([$class: 'InfluxDbPublisher',
-                        customData: null,
+                        customData: mydata,
                         customDataMap: null,
-                        target: 'stgDB'])
+                        target: 'DSL_DB'])
                 }
             }
     }
