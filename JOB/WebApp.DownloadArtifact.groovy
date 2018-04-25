@@ -25,5 +25,5 @@ node('master') {
         step([$class: 'InfluxDbPublisher',
             customData: null,
             customDataMap: null,
-            target: 'stgDB'])
+            target: 'DSL_DB'])
 }
