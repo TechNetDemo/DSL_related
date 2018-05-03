@@ -12,18 +12,22 @@ node('master') {
         server.download(downloadSpec);
         if(currentBuild.result == null) {
             currentBuild.result = "SUCCESS" // sets the ordinal as 0 and boolean to true
-
+                step([$class: 'InfluxDbPublisher',
+                customData: null,
+                customDataMap: null,
+                target: 'JOBS_DB'])
         }
   
     }
         catch (err) {
             if(currentBuild.result == null) {
                 currentBuild.result = "FAILURE" // sets the ordinal as 4 and boolean to false
+                step([$class: 'InfluxDbPublisher',
+                customData: null,
+                customDataMap: null,
+                target: 'JOBS_DB'])
             }
             throw err
         }
-        step([$class: 'InfluxDbPublisher',
-            customData: null,
-            customDataMap: null,
-            target: 'DSL_DB'])
+
 }

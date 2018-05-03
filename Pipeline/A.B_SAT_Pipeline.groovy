@@ -7,7 +7,7 @@ pipeline {
                         mydata =[:]
                         mydata['upstream'] = upstream
                         
-                        Job_WebApp= build job: '/A.B/SAT/A.B_SAT_WebApp.Pipeline', parameters: [string(name: 'upstream', value: JOB_NAME),string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                        Job_WebApp= build job: '/A.B/SAT/A.B_SAT_WebApp.Pipeline', parameters: [string(name: 'envir', value: 'SAT'),string(name: 'upstream', value: JOB_NAME),string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
                         
                         mydata['job1_BuildNum'] = Job_WebApp.getNumber()
                         mydata['job1_Result'] = Job_WebApp.getResult()
