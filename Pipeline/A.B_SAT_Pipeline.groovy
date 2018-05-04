@@ -1,11 +1,6 @@
 pipeline {
     agent {label "master"}
     stages{
-        stage('Approval'){
-            steps{
-                input message: 'Start SAT Deployment?', submitter: 'sat_admin'
-            }
-        }
         stage('WebApp'){
             steps{
                 build job: '/A.B/SAT/A.B_SAT_WebApp.Pipeline', parameters: [string(name: 'envir', value: 'SAT'), string(name: 'upstream', value: JOB_NAME),string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]

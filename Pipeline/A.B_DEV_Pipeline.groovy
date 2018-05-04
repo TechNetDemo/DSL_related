@@ -1,11 +1,6 @@
 pipeline {
     agent {label "master"}
     stages{
-		stage('Approval'){
-			steps{
-                input message: 'Start DEV Deployment?', submitter: 'dev_admin'
-            }
-        }
         stage('WebApp'){
             steps{
                 build job: '/A.B/DEV/A.B_DEV_WebApp.Pipeline', parameters: [string(name: 'envir', value: 'DEV'), string(name: 'upstream', value: JOB_NAME),string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
