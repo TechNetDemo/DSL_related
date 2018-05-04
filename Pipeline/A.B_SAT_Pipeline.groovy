@@ -3,7 +3,7 @@ pipeline {
     stages{
         stage('WebApp'){
             steps{
-                build job: '/A.B/SAT/A.B_SAT_WebApp.Pipeline', parameters: [string(name: 'envir', value: 'SAT'), string(name: 'upstream', value: JOB_NAME),string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                build job: '/A.B/SAT/A.B_SAT_WebApp.Pipeline', parameters: [string(name: 'envir', value: 'SAT'), string(name: 'upstream', value: JOB_NAME),string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password), string(name: 'db_tableName', value: db_tableName)]
             }
         }
         stage('Component2'){

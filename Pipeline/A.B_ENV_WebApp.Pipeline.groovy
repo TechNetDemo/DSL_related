@@ -32,7 +32,7 @@ pipeline {
         stage('Replace'){
             steps{
                 script{
-                        job2 = build job: '/A.B/JOB/WebApp.ReplaceToken', propagate: false, parameters: [string(name: 'db_username', value: db_username), string(name: 'db_password', value: db_password), string(name: 'artifact_version', value: artifact_version)]
+                        job2 = build job: '/A.B/JOB/WebApp.ReplaceToken', propagate: false, parameters: [string(name: 'db_username', value: db_username), string(name: 'db_password', value: db_password), string(name: 'db_tableName', value: db_tableName), string(name: 'artifact_version', value: artifact_version)]
                        
                         def mydata = [:]
                         mydata['job_JobName'] = job2.getProjectName()
