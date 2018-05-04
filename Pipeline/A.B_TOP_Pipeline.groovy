@@ -15,7 +15,7 @@ pipeline {
             }
             steps {
                 input message: 'Start DEV Deployment? (by approver)', submitter: 'admin,dev_admin'
-                build job: '/A.B/DEV/A.B_DEV_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                build job: '/A.B/DEV/A.B_DEV_Pipeline', parameters: [string(name: 'artifact_version', string(name: 'upstream', value: JOB_NAME), value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
         stage('SIT') { 
@@ -29,7 +29,7 @@ pipeline {
             }
             steps {
                 input message: 'Start SIT Deployment?(by approver)'
-                build job:'/A.B/SIT/A.B_SIT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                build job:'/A.B/SIT/A.B_SIT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version), string(name: 'upstream', value: JOB_NAME), string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
         stage('SAT') { 
@@ -43,7 +43,7 @@ pipeline {
             }
             steps {
                 input message: 'Start SAT Deployment? (by approver)'    
-                build job:'/A.B/SAT/A.B_SAT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                build job:'/A.B/SAT/A.B_SAT_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'upstream', value: JOB_NAME), string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
         stage('PROD') { 
@@ -57,7 +57,7 @@ pipeline {
             }
             steps {
                 input message: 'Start PROD Deployment? (by approver)'   
-                build job:'/A.B/PROD/A.B_PROD_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
+                build job:'/A.B/PROD/A.B_PROD_Pipeline', parameters: [string(name: 'artifact_version', value: artifact_version),string(name: 'upstream', value: JOB_NAME), string(name: 'db_username', value: db_username),string(name: 'db_password', value: db_password)]
             }
         }
     }
