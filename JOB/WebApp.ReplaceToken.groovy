@@ -14,7 +14,11 @@ println(fileContents);
  parameters.each {
   	 println "parameter ${it.name}:" + it.getValue();
   	if (it.getValue() != null) {
-        fileContents = fileContents.replaceAll("@@@${it.name}@@@" , it.getValue())
+           if (it.getValue().getClass() != java.lang.String) {
+              fileContents = fileContents.replaceAll("@@@${it.name}@@@" , it.getValue().toString())
+           }else{
+              fileContents = fileContents.replaceAll("@@@${it.name}@@@" , it.getValue())
+           }
   	}
 }
 
@@ -24,3 +28,4 @@ println(fileContents);
 //output file
 File output = new File(target_file)
 output.write(fileContents)
+
