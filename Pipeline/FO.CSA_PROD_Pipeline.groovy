@@ -23,7 +23,7 @@ pipeline {
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
                         customDataMap: null,
-                        target: 'PIPELINES_DB'])
+                        target: 'InfluxDBPipelines'])
                 }
             }
             aborted {
@@ -37,7 +37,7 @@ pipeline {
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
                         customDataMap: null,
-                        target: 'PIPELINES_DB'])
+                        target: 'InfluxDBPipelines'])
                 }
             }
             failure {
@@ -51,7 +51,7 @@ pipeline {
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
                         customDataMap: null,
-                        target: 'PIPELINES_DB'])
+                        target: 'InfluxDBPipelines'])
                 }
             }
     }
