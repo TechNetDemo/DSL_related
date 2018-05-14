@@ -1,4 +1,4 @@
-//3May version, multiplle WebApp.Pipeline
+//10/5 Combined WebApp.Pipeline  to /JOB, db_password masked
 folder('A.B')
 
 folder('A.B/JOB')
@@ -25,6 +25,10 @@ job('A.B/JOB/WebApp.ReplaceToken'){
   description 'A.B/JOB/WebApp.ReplaceToken'
   customWorkspace('/var/lib/jenkins/workspace/A.B/JOB/WebApp.DownloadArtifact/ArtifactDirectory/com/technet/webapp-team1/${artifact_version}')
   configure { project ->
+    project / publishers << 'jenkinsci.plugins.influxdb.InfluxDbPublisher' {      
+        selectedTarget('JOBS_DB')
+    }
+    
     project / 'buildWrappers' / 'hudson.plugins.ws__cleanup.PreBuildCleanup' {
         patterns{
             'hudson.plugins.ws__cleanup.Pattern'{
@@ -38,9 +42,9 @@ job('A.B/JOB/WebApp.ReplaceToken'){
   parameters {
     stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
     stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_url','dbc:mysql://mydbinstance.c3aqksy4y3yi.us-east-1.rds.amazonaws.com:3306/WebAppDB','description written in DSL script')
+    nonStoredPasswordParam('db_password','Runtime input TOP_Pipeline-<ENV> stage')
     stringParam('db_tableName','film','description written in DSL script')
+    stringParam('db_url','dbc:mysql://mydbinstance.c3aqksy4y3yi.us-east-1.rds.amazonaws.com:3306/WebAppDB','description written in DSL script')
   }  
   steps{
     shell('jar -xvf *.war')
@@ -59,7 +63,6 @@ job('A.B/JOB/WebApp.Deploy'){
      labelParam('node_to_run'){
        description('Input at ENV_Pipeline')
        defaultValue('test_label')
-       allNodes('allCases','AllNodeEligibility')
      }
    }
   steps{
@@ -78,9 +81,37 @@ job('A.B/JOB/WebApp.Deploy'){
       war('webApp.war')
       onFailure(false)
     }
+    
+    project / publishers << 'jenkinsci.plugins.influxdb.InfluxDbPublisher' {      
+        selectedTarget('JOBS_DB')
+    }
   }
 }
 
+//A.B/JOB/A.B_WebApp.Pipeline
+pipelineJob('A.B/JOB/A.B_WebApp.Pipeline'){
+  parameters {
+    stringParam('envir','TEST','passed from ENV_Pipeline')
+    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
+    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    nonStoredPasswordParam('db_password','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_tableName','From_ENV_Pipeline','Input at ENV_Pipeline')
+    stringParam('upstream','No_Upstream','passed from ENV_Pipeline')
+    labelParam('node_to_run'){
+      description('passed from ENV_Pipeline')
+      defaultValue('Error: no value input')
+    }
+  }
+  definition {
+    cpsScm{
+      scm{
+        git('https://github.com/TechNetDemo/DSL_related.git')
+      }
+      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
+    }
+  }  
+}
+                
 //A.B_Build_WebApp.Build
 job('A.B/BUILD/A.B_BUILD_WebApp.Build'){
   scm{
@@ -134,7 +165,10 @@ pipelineJob('A.B/DEV/A.B_DEV_Pipeline'){
   parameters {
     stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
     stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    nonStoredPasswordParam('db_password','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_tableName','film10','options: film, film10, film20')
+    stringParam('upstream','No_Upstream','passed from TOP_Pipeline')
+    stringParam('node_to_run','dev_label','Specify the agents to deploy (for WebApp component)')
   }
   definition {
     cpsScm{
@@ -145,34 +179,16 @@ pipelineJob('A.B/DEV/A.B_DEV_Pipeline'){
     }
   }  
 }
-//A.B_DEV_WebApp.Pipeline
-pipelineJob('A.B/DEV/A.B_DEV_WebApp.Pipeline'){
-  parameters {
-    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
-    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    labelParam('node_to_run'){
-      description('Specify the agents to deploy')
-      defaultValue('dev_label')
-      allNodes('allCases','AllNodeEligibility')
-    }
-  }
-  definition {
-    cpsScm{
-      scm{
-        git('https://github.com/TechNetDemo/DSL_related.git')
-      }
-      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
-    }
-  }  
-}
 
 //A.B_SIT_Pipeline
 pipelineJob('A.B/SIT/A.B_SIT_Pipeline'){
   parameters {
     stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
     stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    nonStoredPasswordParam('db_password','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_tableName','film','options: film, film10, film20')
+    stringParam('upstream','No_Upstream','passed from TOP_Pipeline')
+    stringParam('node_to_run','sit_label','Specify the agents to deploy (for WebApp component)')
   }
   definition {
     cpsScm{
@@ -183,34 +199,16 @@ pipelineJob('A.B/SIT/A.B_SIT_Pipeline'){
     }
   }  
 }
-//A.B_SIT_WebApp.Pipeline
-pipelineJob('A.B/SIT/A.B_SIT_WebApp.Pipeline'){
-  parameters {
-    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
-    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    labelParam('node_to_run'){
-      description('Specify the agents to deploy')
-      defaultValue('sit_label')
-      allNodes('allCases','AllNodeEligibility')
-    }
-  }
-  definition {
-    cpsScm{
-      scm{
-        git('https://github.com/TechNetDemo/DSL_related.git')
-      }
-      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
-    }
-  }  
-}
 
 //A.B_SAT_Pipeline
 pipelineJob('A.B/SAT/A.B_SAT_Pipeline'){
   parameters {
     stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
     stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    nonStoredPasswordParam('db_password','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_tableName','film','options: film, film10, film20')
+    stringParam('upstream','No_Upstream','passed from TOP_Pipeline')
+    stringParam('node_to_run','sat_label','Specify the agents to deploy (for WebApp component)')
   }
   definition {
     cpsScm{
@@ -221,34 +219,16 @@ pipelineJob('A.B/SAT/A.B_SAT_Pipeline'){
     }
   }  
 }
-//A.B_SAT_WebApp.Pipeline
-pipelineJob('A.B/SAT/A.B_SAT_WebApp.Pipeline'){
-  parameters {
-    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
-    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    labelParam('node_to_run'){
-      description('Specify the agents to deploy')
-      defaultValue('sat_label')
-      allNodes('allCases','AllNodeEligibility')
-    }
-  }
-  definition {
-    cpsScm{
-      scm{
-        git('https://github.com/TechNetDemo/DSL_related.git')
-      }
-      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
-    }
-  }  
-}
 
 //A.B_PROD_Pipeline
 pipelineJob('A.B/PROD/A.B_PROD_Pipeline'){
   parameters {
     stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
     stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
+    nonStoredPasswordParam('db_password','Runtime input TOP_Pipeline-<ENV> stage')
+    stringParam('db_tableName','film','options: film, film10, film20')
+    stringParam('upstream','No_Upstream','passed from TOP_Pipeline')
+    stringParam('node_to_run','prod_label','Specify the agents to deploy (for WebApp component)')
   }
   definition {
     cpsScm{
@@ -256,27 +236,6 @@ pipelineJob('A.B/PROD/A.B_PROD_Pipeline'){
         git('https://github.com/TechNetDemo/DSL_related.git')
       }
       scriptPath('Pipeline/A.B_PROD_Pipeline.groovy')
-    }
-  }  
-}
-//A.B_PROD_WebApp.Pipeline
-pipelineJob('A.B/PROD/A.B_PROD_WebApp.Pipeline'){
-  parameters {
-    stringParam('artifact_version','From_TOP_Pipeline','Input at TOP_Pipeline')
-    stringParam('db_username','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    stringParam('db_password','From_TOP_Pipeline','Runtime input TOP_Pipeline-<ENV> stage')
-    labelParam('node_to_run'){
-      description('Specify the agents to deploy')
-      defaultValue('prod_label')
-      allNodes('allCases','AllNodeEligibility')
-    }
-  }
-  definition {
-    cpsScm{
-      scm{
-        git('https://github.com/TechNetDemo/DSL_related.git')
-      }
-      scriptPath('Pipeline/A.B_ENV_WebApp.Pipeline.groovy')
     }
   }  
 }
