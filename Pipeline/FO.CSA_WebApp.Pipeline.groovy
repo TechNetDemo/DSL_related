@@ -110,7 +110,7 @@ pipeline {
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = currentBuild.result
                     pipelineData['environment'] = envir
-                    mydata['job_ExpectedTime'] = 50000
+                    pipelineData['job_ExpectedTime'] = 50000
 
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
@@ -132,7 +132,7 @@ pipeline {
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = currentBuild.result
                     pipelineData['environment'] = envir
-                    mydata['job_ExpectedTime'] = 50000
+                    pipelineData['job_ExpectedTime'] = 50000
 
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
@@ -155,7 +155,7 @@ pipeline {
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = currentBuild.result
                     pipelineData['environment'] = envir
-                    mydata['job_ExpectedTime'] = 50000
+                    pipelineData['job_ExpectedTime'] = 50000
 
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
