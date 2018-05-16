@@ -19,7 +19,9 @@ pipeline {
                     pipelineData['environment'] = 'PROD'
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = "SUCCESS"
+                    pipelineData['pipeline_ExpectedTime'] = 200
                     currentBuild.result = "SUCCESS"
+
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
                         customDataMap: null,
@@ -33,7 +35,9 @@ pipeline {
                     pipelineData['environment'] = 'PROD'
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = "ABORTED"
+                    pipelineData['pipeline_ExpectedTime'] = 200
                     currentBuild.result = "ABORTED"
+
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
                         customDataMap: null,
@@ -47,7 +51,9 @@ pipeline {
                     pipelineData['environment'] = 'PROD'
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = "FAILURE"
+                    pipelineData['pipeline_ExpectedTime'] = 200
                     currentBuild.result = "FAILURE"
+                    
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
                         customDataMap: null,
