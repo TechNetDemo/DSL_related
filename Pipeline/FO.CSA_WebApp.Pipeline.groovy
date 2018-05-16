@@ -16,7 +16,7 @@ pipeline {
                     mydata['job_Result'] = job1.getResult()
                     mydata['environment'] = envir
                     mydata['job_NodeName'] = 'Master'
-                    mydata['job_ExpectedTime'] = 10000
+                    mydata['job_ExpectedTime'] = 20
                     myList << mydata
                     //echo 'myList size: ' + myList.size()
                     
@@ -43,7 +43,7 @@ pipeline {
                         mydata['job_NodeName'] = 'Master'
                         mydata['job_Result'] = job2.getResult()
                         mydata['environment'] = envir
-                        mydata['job_ExpectedTime'] = 500
+                        mydata['job_ExpectedTime'] = 5
                         myList << mydata
                         
                         if(job2.getResult()!= 'SUCCESS'){
@@ -75,7 +75,7 @@ pipeline {
                             mydata['job_Duration'] = job3.getDuration()
                             mydata['job_Result'] = job3.getResult()
                             mydata['environment'] = envir
-                            mydata['job_ExpectedTime'] = 5000
+                            mydata['job_ExpectedTime'] = 40
                             myList << mydata
                             
                             if(job3.getResult()!= 'SUCCESS'){
@@ -110,7 +110,7 @@ pipeline {
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = currentBuild.result
                     pipelineData['environment'] = envir
-                    pipelineData['job_ExpectedTime'] = 50000
+                    pipelineData['pipeline_ExpectedTime'] = 80
 
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
@@ -132,7 +132,7 @@ pipeline {
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = currentBuild.result
                     pipelineData['environment'] = envir
-                    pipelineData['job_ExpectedTime'] = 50000
+                    pipelineData['pipeline_ExpectedTime'] = 80
 
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
@@ -155,7 +155,7 @@ pipeline {
                     pipelineData['upstream'] = upstream
                     pipelineData['result'] = currentBuild.result
                     pipelineData['environment'] = envir
-                    pipelineData['job_ExpectedTime'] = 50000
+                    pipelineData['pipeline_ExpectedTime'] = 100
 
                     step([$class: 'InfluxDbPublisher',
                         customData: pipelineData,
